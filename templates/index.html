@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EtsyLens — Local Etsy Research Tool</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">EL</span>
+      <div>
+        <h1>EtsyLens</h1>
+        <p>Local Etsy listing research — no subscription, your machine, live data.</p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="explorer">Listing Explorer</button>
+    <button class="tab-btn" data-tab="keyword">Keyword Finder</button>
+    <button class="tab-btn" data-tab="shop">Shop Analyzer</button>
+    <button class="tab-btn" data-tab="optimizer">Listing Optimizer</button>
+  </nav>
+
+  <main>
+    <!-- Listing Explorer -->
+    <section class="panel active" id="explorer">
+      <h2>Listing Explorer</h2>
+      <p class="hint">Paste one or more Etsy listing URLs (one per line) to pull title, price, favorites, reviews, and an estimated sales range.</p>
+      <textarea id="explorer-input" rows="4" placeholder="https://www.etsy.com/listing/123456789/..."></textarea>
+      <button class="btn" onclick="runExplorer()">Analyze</button>
+      <div id="explorer-results" class="results"></div>
+    </section>
+
+    <!-- Keyword Finder -->
+    <section class="panel" id="keyword">
+      <h2>Keyword Finder</h2>
+      <p class="hint">Enter a search term to see live competition and pricing signal from Etsy search results.</p>
+      <input type="text" id="keyword-input" placeholder="e.g. twitch panels poker">
+      <button class="btn" onclick="runKeyword()">Search</button>
+      <div id="keyword-results" class="results"></div>
+    </section>
+
+    <!-- Shop Analyzer -->
+    <section class="panel" id="shop">
+      <h2>Shop Analyzer</h2>
+      <p class="hint">Enter an Etsy shop name (as it appears in the shop URL) to pull a snapshot of its listings.</p>
+      <input type="text" id="shop-input" placeholder="e.g. FancyShards">
+      <button class="btn" onclick="runShop()">Analyze Shop</button>
+      <div id="shop-results" class="results"></div>
+    </section>
+
+    <!-- Listing Optimizer -->
+    <section class="panel" id="optimizer">
+      <h2>Listing Optimizer</h2>
+      <p class="hint">Paste one listing URL to get an SEO score against Etsy best practices.</p>
+      <input type="text" id="optimizer-input" placeholder="https://www.etsy.com/listing/123456789/...">
+      <button class="btn" onclick="runOptimizer()">Score Listing</button>
+      <div id="optimizer-results" class="results"></div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
