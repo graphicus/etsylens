@@ -1,0 +1,303 @@
+:root {
+  --ink: #201b16;
+  --paper: #f6f1e7;
+  --accent: #e8580f;
+  --accent-ink: #7a2e08;
+  --line: #ddd3c2;
+  --muted: #85796a;
+  --good: #2f6b46;
+  --bad: #a83a24;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.55;
+}
+
+h1, h2, h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+a { color: inherit; }
+
+/* ---- Header ---- */
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 24px 0;
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 18px;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.site-header nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.site-header nav a { text-decoration: none; }
+.site-header nav a:not(.nav-cta):hover { color: var(--accent-ink); }
+
+.nav-cta {
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 7px 16px;
+}
+
+.nav-cta:hover { background: var(--ink); color: var(--paper); }
+
+/* ---- Layout ---- */
+
+main { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+section { padding: 96px 0; border-bottom: 1px solid var(--line); }
+section:last-of-type { border-bottom: none; }
+
+section h2 {
+  font-size: 30px;
+  margin-bottom: 28px;
+  max-width: 22ch;
+}
+
+/* ---- Hero ---- */
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 56px;
+  align-items: center;
+  padding-top: 64px;
+}
+
+.hero h1 {
+  font-size: 44px;
+  line-height: 1.12;
+  max-width: 14ch;
+}
+
+.lede {
+  font-size: 17px;
+  color: #423a30;
+  max-width: 46ch;
+  margin: 22px 0 32px;
+}
+
+.hero-actions { display: flex; gap: 14px; }
+
+.btn {
+  display: inline-block;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-primary { background: var(--accent); color: #fff8f2; }
+.btn-primary:hover { background: var(--accent-ink); }
+
+.btn-ghost { border: 1px solid var(--line); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--ink); }
+
+/* ---- Hero visual: viewfinder ---- */
+
+.hero-visual { position: relative; }
+
+.viewfinder {
+  position: relative;
+  padding: 26px;
+}
+
+.corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-color: var(--accent);
+  border-style: solid;
+  border-width: 0;
+}
+
+.corner.tl { top: 0; left: 0; border-top-width: 2.5px; border-left-width: 2.5px; }
+.corner.tr { top: 0; right: 0; border-top-width: 2.5px; border-right-width: 2.5px; }
+.corner.bl { bottom: 0; left: 0; border-bottom-width: 2.5px; border-left-width: 2.5px; }
+.corner.br { bottom: 0; right: 0; border-bottom-width: 2.5px; border-right-width: 2.5px; }
+
+.mock-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 22px;
+}
+
+.mock-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 16px;
+  line-height: 1.4;
+}
+
+.mock-score-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.mock-score {
+  font-family: 'Fraunces', serif;
+  font-size: 40px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.mock-score-pct { font-size: 20px; }
+
+.mock-score-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.mock-checks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+}
+
+.mock-checks li {
+  padding: 7px 0;
+  border-top: 1px solid var(--line);
+}
+
+.mock-checks li.pass::before { content: "✓ "; color: var(--good); }
+.mock-checks li.fail::before { content: "✗ "; color: var(--bad); }
+
+.visual-caption {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+  text-align: center;
+}
+
+/* ---- Modules ---- */
+
+.module-list { border-top: 1px solid var(--line); }
+
+.module-row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 32px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.module-row h3 {
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.module-row p {
+  margin: 0;
+  color: #423a30;
+  max-width: 58ch;
+}
+
+/* ---- Problem / Build shared prose ---- */
+
+.problem p, .build p, .limitation p {
+  max-width: 62ch;
+  color: #423a30;
+  font-size: 16px;
+}
+
+.problem p + p, .build p + p, .limitation p + p { margin-top: 16px; }
+
+.stack-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+}
+
+.stack-row span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 14px;
+  color: var(--accent-ink);
+}
+
+/* ---- Limitation ---- */
+
+.limitation { display: grid; grid-template-columns: 56px 1fr; gap: 24px; }
+
+.limitation-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+/* ---- Footer ---- */
+
+.site-footer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.site-footer a { text-decoration: none; }
+.site-footer a:hover { color: var(--accent-ink); }
+
+/* ---- Responsive ---- */
+
+@media (max-width: 780px) {
+  .hero { grid-template-columns: 1fr; padding-top: 32px; }
+  .hero h1 { font-size: 32px; max-width: none; }
+  .module-row { grid-template-columns: 1fr; gap: 8px; }
+  .limitation { grid-template-columns: 1fr; }
+  section { padding: 64px 0; }
+  .site-footer { flex-direction: column; gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

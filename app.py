@@ -390,6 +390,11 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/about")
+def about():
+    return render_template("landing.html")
+
+
 DEMO_NOTICE = (
     "Etsy is blocking live scraping from this server's network (a cloud host). "
     "Showing demo data so you can see how this feature works — it scrapes live "

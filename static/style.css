@@ -21,10 +21,20 @@ body {
 .topbar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 24px 32px;
   border-bottom: 1px solid var(--line);
   background: #fff;
 }
+
+.about-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.about-link:hover { text-decoration: underline; }
 
 .brand { display: flex; align-items: center; gap: 14px; }
 

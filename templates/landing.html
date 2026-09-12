@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EtsyLens — Etsy research, without the subscription</title>
+<meta name="description" content="EtsyLens pulls live pricing, competition, and SEO signal straight from Etsy — no subscription, no crawled database, just the four lookups you need before publishing a listing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='landing.css') }}">
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="wordmark" href="/about">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="11" cy="11" r="8.5" stroke="currentColor" stroke-width="2"/>
+        <line x1="17.2" y1="17.2" x2="23.5" y2="23.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      EtsyLens
+    </a>
+    <nav>
+      <a href="https://github.com/graphicus/etsylens" target="_blank">Source</a>
+      <a class="nav-cta" href="/">Launch the tool</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>See what's actually working in your Etsy niche.</h1>
+        <p class="lede">
+          EtsyLens pulls live pricing, competition, and SEO signal straight from
+          Etsy's own pages. No subscription, no crawled database of 130 million
+          listings — just the four lookups you'd want before publishing a new one.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/">Launch the tool</a>
+          <a class="btn btn-ghost" href="#modules">See what it does</a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="viewfinder">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="mock-card">
+            <p class="mock-title">Minimalist Twitch Panels | Clean Line Art Stream Overlay Set | 12 Panel Pack</p>
+            <div class="mock-score-row">
+              <span class="mock-score">90<span class="mock-score-pct">%</span></span>
+              <span class="mock-score-label">SEO score</span>
+            </div>
+            <ul class="mock-checks">
+              <li class="pass">Tag count — 13/13 used</li>
+              <li class="pass">Image count — 8/10</li>
+              <li class="fail">Description depth — 279 chars</li>
+            </ul>
+          </div>
+        </div>
+        <p class="visual-caption">Actual output from the Listing Optimizer</p>
+      </div>
+    </section>
+
+    <!-- MODULES -->
+    <section id="modules" class="modules">
+      <h2>Four lookups. One tool.</h2>
+      <div class="module-list">
+        <div class="module-row">
+          <h3>Listing Explorer</h3>
+          <p>Paste a listing URL, get title, price, favorites, reviews, rating, and tags — plus an estimated sales range from the standard reviews-times-multiplier heuristic.</p>
+        </div>
+        <div class="module-row">
+          <h3>Keyword Finder</h3>
+          <p>Search a term, see what's already ranking: result count, average and median price, and the spread across the top listings.</p>
+        </div>
+        <div class="module-row">
+          <h3>Shop Analyzer</h3>
+          <p>Enter a shop name, get a snapshot of its visible listing count and reported total sales.</p>
+        </div>
+        <div class="module-row">
+          <h3>Listing Optimizer</h3>
+          <p>Score any listing against six SEO checks — title length, tag usage, description depth, image count, reviews, pricing — with specific fixes for each.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROBLEM -->
+    <section class="problem">
+      <h2>Why not just use a SaaS tool?</h2>
+      <p>
+        Tools like ListingView.io charge a recurring fee for a workflow that's
+        really four repeatable lookups. Their edge is a proprietary database
+        built from continuously crawling 130 million-plus listings — genuinely
+        useful at scale, and genuinely unnecessary if you're checking your own
+        listings or scouting a handful of competitors on demand.
+      </p>
+      <p>
+        EtsyLens fetches the same information live, straight from Etsy's public
+        pages, the moment you ask for it. No database to maintain, no seat to pay for.
+      </p>
+    </section>
+
+    <!-- BUILD -->
+    <section class="build">
+      <h2>Built in the open, with AI doing the typing</h2>
+      <p>
+        The scraping logic, SEO scoring model, and this page were all built
+        through conversational iteration with Claude — describing what each
+        module should do and reviewing the code as it came together, rather
+        than writing it line by line.
+      </p>
+      <div class="stack-row">
+        <span>Python</span><span>Flask</span><span>BeautifulSoup</span><span>Vanilla JS</span><span>Render</span>
+      </div>
+    </section>
+
+    <!-- HONEST LIMITATION -->
+    <section class="limitation">
+      <div class="limitation-mark">!</div>
+      <div>
+        <h2>One honest limitation</h2>
+        <p>
+          Etsy blocks scraping requests from cloud and datacenter IP ranges —
+          AWS, GCP, Render, all of them — at the network level. That means the
+          live demo above can't always pull real data from where it's hosted.
+        </p>
+        <p>
+          Rather than show a raw error, the app detects the block and falls
+          back to clearly-labeled sample data, so every feature stays fully
+          explorable. Clone the repo and run it on your own connection, and it
+          scrapes real, live Etsy data with no changes needed.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <span>EtsyLens — a research tool, not a service.</span>
+    <a href="https://github.com/graphicus/etsylens" target="_blank">View source on GitHub</a>
+  </footer>
+
+</body>
+</html>
