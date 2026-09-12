@@ -25,6 +25,14 @@ Tools like ListingView.io charge a recurring fee for a workflow that's really fo
 
 This was built end-to-end through an AI-directed workflow: the spec, scraping logic, SEO scoring model, and UI were all built through conversational iteration with Claude, then packaged for local use and deployment.
 
+## Live demo & the cloud-IP problem
+
+Live at **[etsylens.onrender.com](https://etsylens.onrender.com)**.
+
+Etsy blocks scraping requests from essentially all cloud/datacenter IP ranges (AWS, GCP, Render, Heroku, etc.) at the network level via bot detection — confirmed by testing the identical request from two separate cloud environments and getting a 403 both times, while the same code works normally from a residential IP.
+
+Rather than let the live demo silently fail with a raw error, the app detects a 403 from Etsy and falls back to clearly-labeled, realistic sample data (`demo: true` in the API response, plus an on-screen banner) so every feature is fully explorable from the deployed link. Run it locally on your own connection and it scrapes real, live Etsy data with no changes needed.
+
 ## Running it locally
 
 ```bash
@@ -48,3 +56,4 @@ The repo includes a `Procfile` so it deploys as-is to Render, Railway, or any He
 - Scraping is inherently fragile — Etsy can change its page structure at any time, which may break selectors in `search_etsy` or `analyze_shop`. The Listing Explorer's JSON-LD parsing is the most resilient of the four, since it depends on Etsy's structured data rather than CSS classes.
 - Estimated sales are a heuristic (reviews × 10–30), not a guarantee — Etsy doesn't expose true sales counts publicly.
 - No rate-limiting or proxy rotation is implemented; heavy use may get temporarily throttled by Etsy. This is intended for personal/light research use, not high-volume scraping.
+- The publicly deployed version always serves demo data for the reason described above — this is expected behavior, not a bug.
