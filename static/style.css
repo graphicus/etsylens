@@ -173,6 +173,16 @@ textarea:focus, input:focus {
   color: var(--accent);
 }
 
+.demo-banner {
+  background: #fdf3e0;
+  border: 1px solid #e8c27a;
+  color: #7a5b12;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .error-msg {
   color: var(--bad);
   font-size: 14px;

@@ -44,6 +44,83 @@ def cached_get(url, ttl=CACHE_TTL):
     return resp.text
 
 
+class EtsyBlocked(Exception):
+    """Raised when Etsy returns a bot-detection block (403) instead of data."""
+    pass
+
+
+def cached_get_or_block(url, ttl=CACHE_TTL):
+    """Like cached_get, but raises EtsyBlocked specifically on 403s so callers
+    can fall back to demo data instead of surfacing a raw error."""
+    try:
+        return cached_get(url, ttl=ttl)
+    except requests.HTTPError as e:
+        if e.response is not None and e.response.status_code == 403:
+            raise EtsyBlocked() from e
+        raise
+
+
+# ---------- Demo data ----------
+# Etsy blocks scraping from virtually all cloud/datacenter IPs (AWS, GCP,
+# Render, Heroku, etc.) at the network level via bot detection. This app
+# works fully against live data when run locally on a residential IP, but a
+# publicly deployed instance will always be blocked. Rather than showing a
+# raw error to anyone visiting the live demo, we fall back to clearly-labeled
+# sample data so the full feature set remains visible and testable.
+
+DEMO_LISTING = {
+    "url": None,
+    "listing_id": "1001591156",
+    "title": "Minimalist Twitch Panels | Clean Line Art Stream Overlay Set | 12 Panel Pack | Instant Download PSD + PNG",
+    "price": "6.50",
+    "currency": "USD",
+    "favorites": 342,
+    "reviews": 87,
+    "rating": 4.9,
+    "tags": ["twitch panels", "stream overlay", "minimalist twitch", "line art panels",
+              "streamer decor", "twitch template", "stream graphics", "instant download",
+              "panel set", "twitch branding", "stream assets", "editable psd", "clean stream design"],
+    "shop_name": "demo-shop",
+    "description": (
+        "A clean, minimalist 12-panel Twitch overlay set with line-art accents. "
+        "Includes editable PSD templates and ready-to-use PNG files, sized for "
+        "Twitch's panel requirements. Instant digital download — no physical item "
+        "will be shipped. Compatible with Twitch, StreamElements, and OBS."
+    ),
+    "images": ["demo1.jpg", "demo2.jpg", "demo3.jpg", "demo4.jpg", "demo5.jpg",
+               "demo6.jpg", "demo7.jpg", "demo8.jpg"],
+    "demo": True,
+}
+
+DEMO_KEYWORD_RESULT = {
+    "keyword": None,
+    "listings": [
+        {"listing_id": "d1", "url": "#", "title": "Minimalist Twitch Panel Set", "price": "6.50", "shop": "demo-shop-a"},
+        {"listing_id": "d2", "url": "#", "title": "Gaming Stream Overlay Bundle", "price": "9.00", "shop": "demo-shop-b"},
+        {"listing_id": "d3", "url": "#", "title": "Cute Pastel Twitch Panels", "price": "5.25", "shop": "demo-shop-c"},
+        {"listing_id": "d4", "url": "#", "title": "Neon Stream Graphics Pack", "price": "12.00", "shop": "demo-shop-d"},
+        {"listing_id": "d5", "url": "#", "title": "Retro Twitch Panel Templates", "price": "7.75", "shop": "demo-shop-e"},
+    ],
+    "stats": {
+        "result_count_shown": 5,
+        "avg_price": 8.10,
+        "median_price": 7.75,
+        "min_price": 5.25,
+        "max_price": 12.00,
+    },
+    "demo": True,
+}
+
+DEMO_SHOP_RESULT = {
+    "shop_name": None,
+    "shop_url": None,
+    "total_sales_reported": 4210,
+    "listing_count_found": 24,
+    "listing_urls": [f"https://www.etsy.com/listing/demo{i}/sample-listing" for i in range(1, 9)],
+    "demo": True,
+}
+
+
 def estimate_sales_from_reviews(review_count):
     """
     Industry-standard heuristic: Etsy review rates run roughly 1-in-10 to
@@ -67,7 +144,7 @@ def extract_listing_id(url):
 
 def parse_listing(url):
     """Parse an Etsy listing page into a structured dict."""
-    html = cached_get(url)
+    html = cached_get_or_block(url)
     soup = BeautifulSoup(html, "html.parser")
 
     data = {
@@ -147,7 +224,7 @@ def parse_listing(url):
 def search_etsy(keyword, max_results=24):
     """Scrape Etsy search results for a keyword: competition + pricing signal."""
     url = f"https://www.etsy.com/search?q={quote_plus(keyword)}"
-    html = cached_get(url)
+    html = cached_get_or_block(url)
     soup = BeautifulSoup(html, "html.parser")
 
     results = []
@@ -208,7 +285,7 @@ def search_etsy(keyword, max_results=24):
 def analyze_shop(shop_name, max_listings=48):
     """Aggregate stats across a shop's visible listings."""
     url = f"https://www.etsy.com/shop/{shop_name}?ref=shop-header-name"
-    html = cached_get(url)
+    html = cached_get_or_block(url)
     soup = BeautifulSoup(html, "html.parser")
 
     listing_links = soup.find_all("a", href=re.compile(r"/listing/"))
@@ -313,6 +390,21 @@ def index():
     return render_template("index.html")
 
 
+DEMO_NOTICE = (
+    "Etsy is blocking live scraping from this server's network (a cloud host). "
+    "Showing demo data so you can see how this feature works — it scrapes live "
+    "data normally when run locally on a residential connection."
+)
+
+
+def demo_listing_for(url):
+    d = dict(DEMO_LISTING)
+    d["url"] = url
+    d["estimated_sales"] = estimate_sales_from_reviews(d["reviews"])
+    d["demo_notice"] = DEMO_NOTICE
+    return d
+
+
 @app.route("/api/listing", methods=["POST"])
 def api_listing():
     url = request.json.get("url", "").strip()
@@ -321,6 +413,8 @@ def api_listing():
     try:
         listing = parse_listing(url)
         return jsonify(listing)
+    except EtsyBlocked:
+        return jsonify(demo_listing_for(url))
     except requests.RequestException as e:
         return jsonify({"error": f"Fetch failed: {e}"}), 502
 
@@ -335,6 +429,8 @@ def api_listing_bulk():
             continue
         try:
             results.append(parse_listing(url))
+        except EtsyBlocked:
+            results.append(demo_listing_for(url))
         except requests.RequestException as e:
             results.append({"url": url, "error": str(e)})
     return jsonify({"results": results})
@@ -347,6 +443,11 @@ def api_keyword():
         return jsonify({"error": "No keyword provided"}), 400
     try:
         return jsonify(search_etsy(keyword))
+    except EtsyBlocked:
+        d = dict(DEMO_KEYWORD_RESULT)
+        d["keyword"] = keyword
+        d["demo_notice"] = DEMO_NOTICE
+        return jsonify(d)
     except requests.RequestException as e:
         return jsonify({"error": f"Fetch failed: {e}"}), 502
 
@@ -358,6 +459,12 @@ def api_shop():
         return jsonify({"error": "No shop name provided"}), 400
     try:
         return jsonify(analyze_shop(shop_name))
+    except EtsyBlocked:
+        d = dict(DEMO_SHOP_RESULT)
+        d["shop_name"] = shop_name
+        d["shop_url"] = f"https://www.etsy.com/shop/{shop_name}"
+        d["demo_notice"] = DEMO_NOTICE
+        return jsonify(d)
     except requests.RequestException as e:
         return jsonify({"error": f"Fetch failed: {e}"}), 502
 
@@ -371,6 +478,10 @@ def api_optimize():
         listing = parse_listing(url)
         report = score_listing(listing)
         return jsonify({"listing": listing, "report": report})
+    except EtsyBlocked:
+        listing = demo_listing_for(url)
+        report = score_listing(listing)
+        return jsonify({"listing": listing, "report": report, "demo_notice": DEMO_NOTICE})
     except requests.RequestException as e:
         return jsonify({"error": f"Fetch failed: {e}"}), 502
 

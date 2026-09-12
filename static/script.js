@@ -22,6 +22,10 @@ function errorHtml(msg) {
   return `<div class="error-msg">${msg}</div>`;
 }
 
+function demoBannerHtml(msg) {
+  return `<div class="demo-banner">⚠️ Demo mode — ${msg}</div>`;
+}
+
 // ---- Listing Explorer ----
 async function runExplorer() {
   const raw = document.getElementById("explorer-input").value;
@@ -38,6 +42,8 @@ async function runExplorer() {
     });
     const data = await res.json();
     out.innerHTML = "";
+    const demoItem = data.results.find(item => item.demo_notice);
+    if (demoItem) out.appendChild(el(demoBannerHtml(demoItem.demo_notice)));
     data.results.forEach(item => out.appendChild(renderListingCard(item)));
   } catch (e) {
     out.innerHTML = errorHtml("Request failed: " + e.message);
@@ -98,6 +104,7 @@ async function runKeyword() {
     `);
 
     out.innerHTML = "";
+    if (data.demo_notice) out.appendChild(el(demoBannerHtml(data.demo_notice)));
     out.appendChild(statsCard);
     data.listings.forEach(l => {
       out.appendChild(el(`
@@ -132,6 +139,7 @@ async function runShop() {
     if (data.error) { out.innerHTML = errorHtml(data.error); return; }
 
     out.innerHTML = "";
+    if (data.demo_notice) out.appendChild(el(demoBannerHtml(data.demo_notice)));
     out.appendChild(el(`
       <div class="card">
         <h3><a href="${data.shop_url}" target="_blank">${data.shop_name}</a></h3>
@@ -174,6 +182,7 @@ async function runOptimizer() {
     `).join("");
 
     out.innerHTML = "";
+    if (data.demo_notice) out.appendChild(el(demoBannerHtml(data.demo_notice)));
     out.appendChild(el(`
       <div class="card">
         <h3>${data.listing.title || "Untitled listing"}</h3>
